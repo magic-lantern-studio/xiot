@@ -27,7 +27,8 @@ if(${XML_PARSER_SELECTION} STREQUAL "xerces")
 	  SET(XERCESC_LIBRARY ${XERCESC_ROOT}/${WIN_ARCH}/lib/xerces-c_3.lib CACHE FILEPATH  "XercesC library" )
 	endif (WIN32)
 	
-	find_package(XercesC)
+	#find_package(XercesC)
+	find_package(XERCESC)
 	
 	if (XERCESC_FOUND)
 		set (XML_PARSER_INCLUDE_DIR ${XERCESC_INCLUDE_DIR})

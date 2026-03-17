@@ -1,5 +1,18 @@
-cmake_minimum_required(VERSION 3.1)
-cmake_policy(SET CMP0074 NEW)
+cmake_minimum_required(VERSION 3.0...3.31)
+
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
+if(POLICY CMP0054)
+  # CMake version 3.14.5 warns when the policy is not set and uses OLD behaviour
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
+if(POLICY CMP0075)
+  # get rid of CMAKE_REQUIRED_LIBRARIES warning from CMake 3.12.2
+  cmake_policy(SET CMP0075 NEW)
+endif()
 
 project(xiot)
  
@@ -71,7 +84,6 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME
 set(CPACK_SOURCE_IGNORE_FILES "/CVS/;/\\\\.svn/;.tex;\\\\.swp$;\\\\.#;/#;/_build/;/contrib/;/integration/;/data/")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${xiot_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${xiot_SOURCE_DIR}/COPYING")
-
 
 
 include(CPack)
