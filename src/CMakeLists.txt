@@ -7,25 +7,24 @@ set(XML_PARSER_SELECTION "XERCES" CACHE STRING "External XML parser to use. One 
 string(TOLOWER ${XML_PARSER_SELECTION} ${XML_PARSER_SELECTION})
 
 # Find the Z library
-if (WIN32)
+if (WIN32 OR MSYS)
   # Hint to included zlib resources
   set(ZLIB_ROOT ${PROJECT_SOURCE_DIR}/contrib/zlib)
   set(ZLIB_INCLUDE_DIR ${ZLIB_ROOT}/include CACHE PATH "Include path of zlib")
   set(ZLIB_LIBRARY ${ZLIB_ROOT}/${WIN_ARCH}/lib/zlib.lib CACHE FILEPATH  "z library" )
-endif (WIN32)
+endif (WIN32 OR MSYS)
 find_package(ZLIB REQUIRED)
-
 	
 # Set up the chosen XML parser library
 if(${XML_PARSER_SELECTION} STREQUAL "xerces")
 
-	if (WIN32)
+	if (WIN32 OR MSYS)
 	  # Hint to included XercesC resources
 	  SET(XERCESC_ROOT ${PROJECT_SOURCE_DIR}/contrib/xercesc)
 	  SET(XML_PARSER_INSTALL_FILES ${XERCESC_ROOT}/${WIN_ARCH}/bin/xerces-c_3_0.dll)
 	  SET(XERCESC_INCLUDE_DIR ${XERCESC_ROOT}/include CACHE PATH "Include path of XercesC library")
 	  SET(XERCESC_LIBRARY ${XERCESC_ROOT}/${WIN_ARCH}/lib/xerces-c_3.lib CACHE FILEPATH  "XercesC library" )
-	endif (WIN32)
+	endif (WIN32 OR MSYS)
 	
 	#find_package(XercesC)
 	find_package(XERCESC)
@@ -40,7 +39,8 @@ if(${XML_PARSER_SELECTION} STREQUAL "xerces")
 	set(XML_PARSER_IMPL_SRC	X3DXMLLoaderXercesImpl.cpp X3DXMLAttributesXercesImpl.cpp)
 
 elseif(${XML_PARSER_SELECTION} STREQUAL "expat")
-	if (WIN32)
+
+	if (WIN32 OR MSYS)
 	  # Hint to included EXPAT resources
 	  SET(EXPAT_ROOT ${PROJECT_SOURCE_DIR}/contrib/expat)
 	  SET(XML_PARSER_INSTALL_FILES ${EXPAT_ROOT}/${WIN_ARCH}/bin/libexpat.dll)
@@ -61,6 +61,8 @@ elseif(${XML_PARSER_SELECTION} STREQUAL "expat")
 	#add_definitions( -DXML_STATIC)
 
 elseif(${XML_PARSER_SELECTION} STREQUAL "qt")
+	# FIXME: Update this to work with Qt5 and Qt6
+	# 2026-03-19 msm (WizzerWorks)
 	
 	find_package(Qt4 4.4.3 COMPONENTS QtCore QtXml REQUIRED )
 	
@@ -143,6 +145,9 @@ set(OPENFI_HEADER
 include_directories( ${XIOT_INCLUDE_DIR} )
 include_directories( ${ZLIB_INCLUDE_DIR} )
 include_directories( ${XML_PARSER_INCLUDE_DIR} )
+message(STATUS "xiot include dir: ${XIOT_INCLUDE_DIR}")
+message(STATUS "zlib include dir: ${ZLIB_INCLUDE_DIR}")
+message(STATUS "xml parser include dir: ${XML_PARSER_INCLUDE_DIR}")
 
 # set up openFI
 add_library(openFI ${OPENFI_SRC} ${OPENFI_HEADER})
@@ -156,7 +161,8 @@ target_link_libraries (xiot ${ZLIB_LIBRARIES})
 target_link_libraries (xiot openFI) 
 target_include_directories(xiot PUBLIC "${PROJECT_BINARY_DIR}/src")
 GENERATE_EXPORT_HEADER(xiot)
-
+message(STATUS "zlib library: ${ZLIB_LIBRARIES}")
+message(STATUS "xml parser library: ${XML_PARSER_LIBRARY}")
 
 add_executable(sourceGenerator gen/sourceGenerator.cpp)
 target_link_libraries (sourceGenerator xiot) 
@@ -171,9 +177,9 @@ install(TARGETS xiot openFI
         )
 install(FILES ${XIOT_HEADER} ${OPENFI_HEADER} ${XIOT_INCLUDE_DIR}/xiot/XIOTConfig.h ${XIOT_INCLUDE_DIR}/xiot/FIConfig.h DESTINATION include/xiot)
 
-if (WIN32)
+if (WIN32 OR MSYS)
 	install(FILES ${XML_PARSER_INSTALL_FILES} DESTINATION bin)
-endif (WIN32)
+endif (WIN32 OR MSYS)
 
 ##
 # vtk distribution stuff

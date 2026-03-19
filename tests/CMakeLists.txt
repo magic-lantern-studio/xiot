@@ -4,7 +4,7 @@ include_directories(. ${PROJECT_SOURCE_DIR}/include)
 
 #simpleTest
 add_executable (simpleTest simpleTest.cpp)
-target_link_libraries(simpleTest xiot)
+target_link_libraries(simpleTest xiot ${XML_PARSER_LIBRARY})
 
 #shapeCounter
 add_executable (shapeCounter shapeCounter.cpp)
@@ -21,7 +21,6 @@ target_link_libraries(ioTest xiot)
 #ParserPerformance
 add_executable (parserPerformance parserPerformance.cpp)
 target_link_libraries(parserPerformance xiot)
-
 
 #createEventLog
 add_executable (createEventLog createEventLog.cpp X3DLogNodeHandler.cpp X3DLogNodeHandler.h)
